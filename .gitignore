@@ -38,6 +38,6 @@ validate_local_deployment.sh
 validate_local_deployment.ps1
 verify_refactoring.sh
 
-# Sensitive configuration files (with actual values)
-petclinic-secret.yaml
-petclinic-config.yaml.local
+# # Sensitive configuration files (with actual values)
+# petclinic-secret.yaml
+# petclinic-config.yaml.local
