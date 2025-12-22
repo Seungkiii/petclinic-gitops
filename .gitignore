@@ -1,0 +1,43 @@
+# Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# Jenv
+.java-version
+
+# Eclipse
+.settings/
+.classpath
+.project
+
+# IntelliJ IDEA
+.idea
+*.iml
+
+# Visual Studio Code
+.factorypath
+
+# Branch switching
+generated/
+
+**/.DS_Store
+
+# Local secret overrides
+.env
+*.env
+*.env.*
+*.local
+secret-values/
+
+# Log files
+*.log
+build_output.log
+
+# Test and validation scripts
+validate_local_deployment.sh
+validate_local_deployment.ps1
+verify_refactoring.sh
+
+# Sensitive configuration files (with actual values)
+petclinic-secret.yaml
+petclinic-config.yaml.local
