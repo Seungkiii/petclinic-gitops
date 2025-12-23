@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/<YOUR_GITHUB_ID>/petclinic-gitops.git # 본인 주소
+    repoURL: https://github.com/Seungkiii/petclinic-gitops.git # 본인 주소
     targetRevision: HEAD
     path: apps/customers-service
     
