@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: eso-configs
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "2" # ESO 설치(Wave 1) 후에 실행
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/Seungkiii/petclinic-gitops.git # [수정] 본인 레포 주소
+    targetRevision: HEAD
+    path: infrastructure/configs # 실제 YAML 파일들이 있는 위치
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: bootstrap-root
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/Seungkiii/petclinic-gitops.git # [수정] 본인 레포 주소
+    targetRevision: HEAD
+    path: infrastructure  # 이 폴더 안에 있는 모든 앱을 실행함
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
