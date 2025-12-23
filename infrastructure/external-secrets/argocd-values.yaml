@@ -1,8 +1,9 @@
-# 1. Repo Server에 AVP 바이너리 설치
 repoServer:
   serviceAccount:
-    create: false
-    name: "argocd-repo-server" 
+    create: true  # [수정] Helm이 SA를 생성하게 변경 (없어서 에러나므로)
+    name: "argocd-repo-server"
+    annotations:
+      eks.amazonaws.com/role-arn: "<TERRAFORM에서_만든_POLICY_ARN>" 
 
   initContainers:
     - name: download-tools
@@ -20,7 +21,7 @@ repoServer:
   extraContainers:
     - name: avp-helm
       command: [/var/run/argocd/argocd-cmp-server]
-      image: quay.io/argoproj/argocd:v2.10.1 # 현재 설치된 ArgoCD 버전과 맞추는 게 좋음
+      image: quay.io/argoproj/argocd:v2.12.7 # 버전 호환성 위해 최신 버전 명시
       securityContext:
         runAsNonRoot: true
         runAsUser: 999
@@ -33,7 +34,7 @@ repoServer:
           name: tmp
         - mountPath: /home/argocd/cmp-server/config/plugin.yaml
           subPath: avp-helm.yaml
-          name: avp-helm-config
+          name: cmp-plugin # 아래 extraObjects에서 만든 ConfigMap 이름과 일치
         - mountPath: /usr/local/bin/argocd-vault-plugin
           name: custom-tools
           subPath: argocd-vault-plugin
@@ -41,30 +42,39 @@ repoServer:
   volumes:
     - name: custom-tools
       emptyDir: {}
-    - name: avp-helm-config
+    - name: cmp-plugin
       configMap:
-        name: cmp-plugin
+        name: cmp-plugin # [수정] 아래 extraObjects에서 생성한 이름과 일치시킴
     - name: tmp
       emptyDir: {}
 
-# 2. AVP 플러그인 등록 (ConfigMap)
-configs:
-  cmp:
-    create: true
-    plugins:
-      avp-helm: # 플러그인 이름
-        allowConcurrency: true
-        discover:
-          find:
+# [수정] ConfigMap을 확실하게 만들기 위해 extraObjects 사용
+extraObjects:
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: cmp-plugin
+      namespace: argocd
+    data:
+      avp-helm.yaml: |
+        ---
+        apiVersion: argoproj.io/v1alpha1
+        kind: ConfigManagementPlugin
+        metadata:
+          name: avp-helm
+        spec:
+          allowConcurrency: true
+          discover:
+            find:
+              command:
+                - sh
+                - "-c"
+                - "find . -name 'Chart.yaml' && find . -name 'values.yaml'"
+          generate:
             command:
               - sh
               - "-c"
-              - "find . -name 'Chart.yaml' && find . -name 'values.yaml'"
-        generate:
-          command:
-            - sh
-            - "-c"
-            - |
-              helm template $ARGOCD_APP_NAME . --include-crds |
-              argocd-vault-plugin generate -
-        lockRepo: false
+              - |
+                helm template $ARGOCD_APP_NAME . --include-crds |
+                argocd-vault-plugin generate -
+          lockRepo: false
