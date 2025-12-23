@@ -1,0 +1,70 @@
+# 1. Repo Server에 AVP 바이너리 설치
+repoServer:
+  serviceAccount:
+    create: false
+    name: "argocd-repo-server" 
+
+  initContainers:
+    - name: download-tools
+      image: registry.access.redhat.com/ubi8
+      command: [sh, -c]
+      args:
+        - >-
+          curl -L https://github.com/argoproj-labs/argocd-vault-plugin/releases/download/v1.17.0/argocd-vault-plugin_1.17.0_linux_amd64 -o argocd-vault-plugin &&
+          chmod +x argocd-vault-plugin &&
+          mv argocd-vault-plugin /custom-tools/
+      volumeMounts:
+        - mountPath: /custom-tools
+          name: custom-tools
+
+  extraContainers:
+    - name: avp-helm
+      command: [/var/run/argocd/argocd-cmp-server]
+      image: quay.io/argoproj/argocd:v2.10.1 # 현재 설치된 ArgoCD 버전과 맞추는 게 좋음
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999
+      volumeMounts:
+        - mountPath: /var/run/argocd
+          name: var-files
+        - mountPath: /home/argocd/cmp-server/plugins
+          name: plugins
+        - mountPath: /tmp
+          name: tmp
+        - mountPath: /home/argocd/cmp-server/config/plugin.yaml
+          subPath: avp-helm.yaml
+          name: avp-helm-config
+        - mountPath: /usr/local/bin/argocd-vault-plugin
+          name: custom-tools
+          subPath: argocd-vault-plugin
+
+  volumes:
+    - name: custom-tools
+      emptyDir: {}
+    - name: avp-helm-config
+      configMap:
+        name: cmp-plugin
+    - name: tmp
+      emptyDir: {}
+
+# 2. AVP 플러그인 등록 (ConfigMap)
+configs:
+  cmp:
+    create: true
+    plugins:
+      avp-helm: # 플러그인 이름
+        allowConcurrency: true
+        discover:
+          find:
+            command:
+              - sh
+              - "-c"
+              - "find . -name 'Chart.yaml' && find . -name 'values.yaml'"
+        generate:
+          command:
+            - sh
+            - "-c"
+            - |
+              helm template $ARGOCD_APP_NAME . --include-crds |
+              argocd-vault-plugin generate -
+        lockRepo: false

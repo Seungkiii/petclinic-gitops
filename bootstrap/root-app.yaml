@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://github.com/Seungkiii/petclinic-gitops.git # [수정] 본인 레포 주소
     targetRevision: HEAD
-    path: infrastructure  # 이 폴더 안에 있는 모든 앱을 실행함
+    path: infrastructure/external-secrets  # 이 폴더 안에 있는 모든 앱을 실행함
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
