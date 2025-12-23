@@ -29,20 +29,20 @@ spec:
               value: mysql
             - name: DB_HOST
               valueFrom:
-                configMapKeyRef:
-                  name: petclinic-config
+                secretKeyRef:
+                  name: db-common
                   key: DB_HOST
             - name: SPRING_DATASOURCE_URL
               value: jdbc:mysql://$(DB_HOST):3306/vets_db
             - name: SPRING_DATASOURCE_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: petclinic-db-secret
+                  name: db-microservice-creds
                   key: VETS_DATASOURCE_USERNAME
             - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: petclinic-db-secret
+                  name: db-microservice-creds
                   key: VETS_DATASOURCE_PASSWORD
           readinessProbe:
             httpGet:

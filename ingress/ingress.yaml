@@ -19,6 +19,7 @@ metadata:
     alb.ingress.kubernetes.io/unhealthy-threshold-count: '2'
     
     # Subnet (Public Subnet에 ALB 생성)
+    # ArgoCD Vault Plugin을 통해 값 주입
     alb.ingress.kubernetes.io/subnets: <YOUR_PUBLIC_SUBNET_ID_1>, <YOUR_PUBLIC_SUBNET_ID_2>
     # 리스너 포트
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'

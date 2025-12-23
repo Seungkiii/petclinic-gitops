@@ -49,4 +49,5 @@ spec:
     - tags:
         karpenter.sh/discovery: "petclinic-cluster"
   amiSelectorTerms:
+    # ArgoCD Vault Plugin을 통해 값 주입
     - id: "<YOUR_AMI_ID>"
