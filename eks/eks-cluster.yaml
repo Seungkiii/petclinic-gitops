@@ -8,21 +8,21 @@ metadata:
 
 # [핵심] Terraform으로 만든 VPC를 재사용 (새로 만들지 않음)
 vpc:
-  id: "<YOUR_VPC_ID>"      # Terraform Output의 vpc_id 입력
+  id: "<VPC_ID>"      # Terraform Output의 vpc_id 입력
   subnets:
     # Worker Node가 배치될 Private Subnet (외부 접속 차단)
     private:
       ap-northeast-2a:
-        id: "<YOUR_PRIVATE_SUBNET_ID_1>"      # Terraform Output: private_app_subnet_ids[0]
+        id: "<PRIVATE_SUBNET_A>"      # Terraform Output: private_app_subnet_ids[0]
       ap-northeast-2b:             # [수정] 서울 리전은 보통 2a, 2c 사용
-        id: "<YOUR_PRIVATE_SUBNET_ID_2>"      # Terraform Output: private_app_subnet_ids[1]
+        id: "<PRIVATE_SUBNET_B>"      # Terraform Output: private_app_subnet_ids[1]
     
     # Load Balancer가 배치될 Public Subnet
     public:
       ap-northeast-2a:
-        id: "<YOUR_PUBLIC_SUBNET_ID_1>"      # Terraform Output: public_subnet_ids[0]
+        id: "<PUBLIC_SUBNET_A>"      # Terraform Output: public_subnet_ids[0]
       ap-northeast-2b:
-        id: "<YOUR_PUBLIC_SUBNET_ID_2>"      # Terraform Output: public_subnet_ids[1]
+        id: "<PUBLIC_SUBNET_B>"      # Terraform Output: public_subnet_ids[1]
 
 # 관리형 노드 그룹 (EC2 Worker Nodes)
 managedNodeGroups:
