@@ -1,9 +1,12 @@
+# infrastructure/argocd-values.yaml
+
 repoServer:
   serviceAccount:
-    create: true  # [수정] Helm이 SA를 생성하게 변경 (없어서 에러나므로)
+    create: true
     name: "argocd-repo-server"
     annotations:
-      eks.amazonaws.com/role-arn: "<TERRAFORM에서_만든_POLICY_ARN>" 
+      # [필수] 아까 복사해둔 IAM Role ARN을 여기에 다시 넣으세요!
+      eks.amazonaws.com/role-arn: "arn:aws:iam::123456789012:policy/petclinic-external-secrets-policy"
 
   initContainers:
     - name: download-tools
@@ -21,10 +24,16 @@ repoServer:
   extraContainers:
     - name: avp-helm
       command: [/var/run/argocd/argocd-cmp-server]
-      image: quay.io/argoproj/argocd:v2.12.7 # 버전 호환성 위해 최신 버전 명시
+      image: quay.io/argoproj/argocd:v2.12.7
       securityContext:
         runAsNonRoot: true
         runAsUser: 999
+      
+      # [추가됨] AVP 설정을 환경변수로 주입
+      envFrom:
+        - secretRef:
+            name: argocd-vault-plugin-credentials
+            
       volumeMounts:
         - mountPath: /var/run/argocd
           name: var-files
@@ -34,7 +43,7 @@ repoServer:
           name: tmp
         - mountPath: /home/argocd/cmp-server/config/plugin.yaml
           subPath: avp-helm.yaml
-          name: cmp-plugin # 아래 extraObjects에서 만든 ConfigMap 이름과 일치
+          name: cmp-plugin
         - mountPath: /usr/local/bin/argocd-vault-plugin
           name: custom-tools
           subPath: argocd-vault-plugin
@@ -44,12 +53,12 @@ repoServer:
       emptyDir: {}
     - name: cmp-plugin
       configMap:
-        name: cmp-plugin # [수정] 아래 extraObjects에서 생성한 이름과 일치시킴
+        name: cmp-plugin
     - name: tmp
       emptyDir: {}
 
-# [수정] ConfigMap을 확실하게 만들기 위해 extraObjects 사용
 extraObjects:
+  # 1. 플러그인 정의 ConfigMap
   - apiVersion: v1
     kind: ConfigMap
     metadata:
@@ -78,3 +87,17 @@ extraObjects:
                 helm template $ARGOCD_APP_NAME . --include-crds |
                 argocd-vault-plugin generate -
           lockRepo: false
+
+  # [추가됨] 2. AVP 필수 설정 (Type, Auth, Region)
+  - apiVersion: v1
+    kind: Secret
+    metadata:
+      name: argocd-vault-plugin-credentials
+      namespace: argocd
+    stringData:
+      # AWS SSM Parameter Store를 기본 백엔드로 사용
+      AVP_TYPE: awsssm
+      # IAM Role(IRSA) 방식을 사용
+      AVP_AUTH_TYPE: iam
+      # 리전 설정 (필수)
+      AWS_REGION: ap-northeast-2
