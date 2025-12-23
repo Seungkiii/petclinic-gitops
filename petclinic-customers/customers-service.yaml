@@ -33,7 +33,7 @@ spec:
                   name: db-common
                   key: DB_HOST
             - name: SPRING_DATASOURCE_URL
-              value: jdbc:mysql://$(DB_HOST):3306/customers_db
+              value: jdbc:mysql://$(DB_HOST)/customers_db
             - name: SPRING_DATASOURCE_USERNAME
               valueFrom:
                 secretKeyRef:
