@@ -40,7 +40,7 @@ spec:
   amiFamily: AL2 # Amazon Linux 2
   
   # 실제 존재하는 노드 Role 이름
-  role: "<YOUR_NODE_ROLE_ARN>"
+  role: <path:petclinic/inputs#NODE_ROLE_ARN>
   
   subnetSelectorTerms:
     - tags:
@@ -50,4 +50,4 @@ spec:
         karpenter.sh/discovery: "petclinic-cluster"
   amiSelectorTerms:
     # ArgoCD Vault Plugin을 통해 값 주입
-    - id: "<YOUR_AMI_ID>"
+    - id: <path:petclinic/inputs#KARPNETER_AMI_ID>
