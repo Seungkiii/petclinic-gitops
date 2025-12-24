@@ -86,8 +86,11 @@ extraObjects:
     metadata:
       name: argocd-vault-plugin-credentials
       namespace: argocd
-    stringData:
-      # [수정] 쌍따옴표로 감싸서 공백 문제 원천 차단
-      AVP_TYPE: "awsparameterstore"
-      AVP_AUTH_TYPE: "iam"
-      AWS_REGION: "ap-northeast-2"
+    type: Opaque
+    data:
+      # AVP_TYPE: awssecretsmanager (Base64)
+      AVP_TYPE: YXdzc2VjcmV0c21hbmFnZXI=
+      # AVP_AUTH_TYPE: iam (Base64)
+      AVP_AUTH_TYPE: aWFt
+      # AWS_REGION: ap-northeast-2 (Base64)
+      AWS_REGION: YXAtbm9ydGhlYXN0LTI=
