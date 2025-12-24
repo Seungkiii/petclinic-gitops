@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: customers-service
-          image: <aws-secrets-manager:petclinic/inputs:AWS_ACCOUNT_ID>.dkr.ecr.ap-northeast-2.amazonaws.com/petclinic-customers:v5.0.0
+          image: <path:petclinic/inputs#AWS_ACCOUNT_ID>.dkr.ecr.ap-northeast-2.amazonaws.com/petclinic-customers:v5.0.0
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
