@@ -1,19 +1,17 @@
-# infrastructure/argocd-values.yaml
-
 repoServer:
   serviceAccount:
     create: true
     name: "argocd-repo-server"
     annotations:
-      # [필수] 아까 복사해둔 IAM Role ARN을 여기에 다시 넣으세요!
-      eks.amazonaws.com/role-arn: "arn:aws:iam::206799461964:policy/petclinic-external-secrets-policy"
+      eks.amazonaws.com/role-arn: "arn:aws:iam::206799461964:role/eksctl-petclinic-cluster-addon-iamserviceacco-Role1-aa7PzKPXdCD5" 
 
   initContainers:
     - name: download-tools
       image: registry.access.redhat.com/ubi8
       command: [sh, -c]
       args:
-      - curl -L https://github.com/argoproj-labs/argocd-vault-plugin/releases/download/v1.18.1/argocd-vault-plugin_1.18.1_linux_amd64 -o argocd-vault-plugin && chmod +x argocd-vault-plugin && mv argocd-vault-plugin /custom-tools/
+        # [유지] 한 줄로 작성된 curl 명령어 (잘 하셨습니다)
+        - curl -L https://github.com/argoproj-labs/argocd-vault-plugin/releases/download/v1.18.1/argocd-vault-plugin_1.18.1_linux_amd64 -o argocd-vault-plugin && chmod +x argocd-vault-plugin && mv argocd-vault-plugin /custom-tools/
       volumeMounts:
         - mountPath: /custom-tools
           name: custom-tools
@@ -26,7 +24,6 @@ repoServer:
         runAsNonRoot: true
         runAsUser: 999
       
-      # [추가됨] AVP 설정을 환경변수로 주입
       envFrom:
         - secretRef:
             name: argocd-vault-plugin-credentials
@@ -55,7 +52,6 @@ repoServer:
       emptyDir: {}
 
 extraObjects:
-  # 1. 플러그인 정의 ConfigMap
   - apiVersion: v1
     kind: ConfigMap
     metadata:
@@ -85,16 +81,13 @@ extraObjects:
                 argocd-vault-plugin generate -
           lockRepo: false
 
-  # [추가됨] 2. AVP 필수 설정 (Type, Auth, Region)
   - apiVersion: v1
     kind: Secret
     metadata:
       name: argocd-vault-plugin-credentials
       namespace: argocd
     stringData:
-      # AWS SSM Parameter Store를 기본 백엔드로 사용
-      AVP_TYPE: awsssm
-      # IAM Role(IRSA) 방식을 사용
-      AVP_AUTH_TYPE: iam
-      # 리전 설정 (필수)
-      AWS_REGION: ap-northeast-2
+      # [수정] 쌍따옴표로 감싸서 공백 문제 원천 차단
+      AVP_TYPE: "awsssm"
+      AVP_AUTH_TYPE: "iam"
+      AWS_REGION: "ap-northeast-2"
