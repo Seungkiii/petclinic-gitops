@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: customers-service
-          image: <aws-ssm-parameter-store:/petclinic/aws_account_id>.dkr.ecr.ap-northeast-2.amazonaws.com/petclinic-customers:v5.0.0
+          image: </petclinic/aws_account_id>.dkr.ecr.ap-northeast-2.amazonaws.com/petclinic-customers:v5.0.0
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
