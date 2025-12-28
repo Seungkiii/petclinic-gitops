@@ -10,7 +10,6 @@ repoServer:
       image: registry.access.redhat.com/ubi8
       command: [sh, -c]
       args:
-        # [유지] 한 줄로 작성된 curl 명령어 (잘 하셨습니다)
         - curl -L https://github.com/argoproj-labs/argocd-vault-plugin/releases/download/v1.18.1/argocd-vault-plugin_1.18.1_linux_amd64 -o argocd-vault-plugin && chmod +x argocd-vault-plugin && mv argocd-vault-plugin /custom-tools/
       volumeMounts:
         - mountPath: /custom-tools
@@ -77,6 +76,7 @@ extraObjects:
               - sh
               - "-c"
               - |
+                helm dependency build . &&
                 helm template $ARGOCD_APP_NAME . --include-crds |
                 argocd-vault-plugin generate -
           lockRepo: false

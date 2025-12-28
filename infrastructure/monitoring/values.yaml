@@ -1,11 +1,16 @@
 loki:
   auth_enabled: false
+  # [수정] 아래 설정들은 전부 loki 하위로 들어가야 함
+  deploymentMode: SingleBinary
+  serviceAccount:
+    create: false
+    name: "loki-sa" 
   storage:
     type: 's3'
     bucketNames:
-      chunks: "peclinic-loki-storage-20251229 "
-      ruler:  "peclinic-loki-storage-20251229 "
-      admin:  "peclinic-loki-storage-20251229 "
+      chunks: "petclinic-loki-storage-20251229" # 오타(t) 수정 및 공백 제거
+      ruler:  "petclinic-loki-storage-20251229"
+      admin:  "petclinic-loki-storage-20251229"
     s3:
       region: ap-northeast-2
       endpoint: https://s3.ap-northeast-2.amazonaws.com
@@ -18,12 +23,9 @@ loki:
         index:
           prefix: index_
           period: 24h
-deploymentMode: SingleBinary
-serviceAccount:
-  create: false
-  name: "loki-sa" 
 
 # Promtail 설정
-config:
-  clients:
-    - url: http://loki-gateway.monitoring.svc.cluster.local/loki/api/v1/push
+promtail:
+  config:
+    clients:
+      - url: http://loki-gateway.monitoring.svc.cluster.local/loki/api/v1/push
