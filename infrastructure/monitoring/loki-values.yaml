@@ -1,0 +1,24 @@
+loki:
+  auth_enabled: false
+  storage:
+    type: 's3'
+    bucketNames:
+      chunks: "peclinic-loki-storage-20251229 "
+      ruler:  "peclinic-loki-storage-20251229 "
+      admin:  "peclinic-loki-storage-20251229 "
+    s3:
+      region: ap-northeast-2
+      endpoint: https://s3.ap-northeast-2.amazonaws.com
+  schemaConfig:
+    configs:
+      - from: 2024-01-01
+        store: tsdb
+        object_store: s3
+        schema: v13
+        index:
+          prefix: index_
+          period: 24h
+deploymentMode: SingleBinary
+serviceAccount:
+  create: false
+  name: "loki-sa" 
