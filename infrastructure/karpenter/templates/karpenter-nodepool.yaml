@@ -51,3 +51,8 @@ spec:
   amiSelectorTerms:
     # ArgoCD Vault Plugin을 통해 값 주입
     - id: <path:petclinic/inputs#KARPENTER_AMI_ID>
+  tags:
+    Name: "petclinic-karpenter-node"
+    Environment: "dev"
+    Team: "petclinic"
+    ManagedBy: "Karpenter"
