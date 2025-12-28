@@ -41,8 +41,12 @@ spec:
               value: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
 
             # 4. Prometheus Exemplars 활성화: 그래프에서 트레이스 ID를 심어주는 설정
-            - name: MANAGEMENT_METRICS_DISTRIBUTION_PERCENTILES_HISTOGRAM_ALL
+            - name: MANAGEMENT_METRICS_DISTRIBUTION_PERCENTILES_HISTOGRAM_HTTP_SERVER_REQUESTS
               value: "true"
+
+            - name: MANAGEMENT_METRICS_EXPORT_PROMETHEUS_EXEMPLARS_ENABLED
+              value: "true"
+
           readinessProbe:
             httpGet:
               path: /actuator/health
