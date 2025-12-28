@@ -5,7 +5,6 @@ metadata:
   labels:
     app: petclinic-vets
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: petclinic-vets
