@@ -39,7 +39,7 @@ metadata:
 spec:
   amiFamily: AL2023
   
-  instanceProfile: "eksctl-petclinic-cluster-nodegroup-NodeInstanceRole-jDHABBtewvEA"
+  instanceProfile: "eks-d0cda49b-1d12-9980-fed8-297fb72e099b"
 
   # role: <path:petclinic/inputs#NODE_ROLE_ARN>
   
