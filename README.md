@@ -263,3 +263,4 @@ error: error validating data: failed to download openapi: Get "http://localhost:
 
 5. **RDS 접근**: EKS 노드의 보안 그룹이 RDS 인스턴스에 접근할 수 있도록 설정되어 있어야 합니다.
 
+# Sun Dec 28 15:22:23 KST 2025
