@@ -1,4 +1,0 @@
-config:
-  clients:
-    # Loki Gateway를 통해 로그를 전송합니다.
-    - url: http://loki-gateway.monitoring.svc.cluster.local/loki/api/v1/push

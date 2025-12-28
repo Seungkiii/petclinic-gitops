@@ -22,3 +22,8 @@ deploymentMode: SingleBinary
 serviceAccount:
   create: false
   name: "loki-sa" 
+
+# Promtail 설정
+config:
+  clients:
+    - url: http://loki-gateway.monitoring.svc.cluster.local/loki/api/v1/push
