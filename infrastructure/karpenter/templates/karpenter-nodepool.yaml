@@ -50,4 +50,4 @@ spec:
         karpenter.sh/discovery: "petclinic-cluster"
   amiSelectorTerms:
     # ArgoCD Vault Plugin을 통해 값 주입
-    - id: <path:petclinic/inputs#KARPNETER_AMI_ID>
+    - id: <path:petclinic/inputs#KARPENTER_AMI_ID>
