@@ -27,6 +27,22 @@ spec:
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: mysql
+            # 1. Tempo(Zipkin) 엔드포인트: 트레이스 데이터를 보낼 주소
+            - name: MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
+              value: "http://tempo.monitoring.svc.cluster.local:9411/api/v2/spans"
+            
+            # 2. 샘플링 비율: 1.0은 모든 요청을 수집함을 의미
+            - name: MANAGEMENT_TRACING_SAMPLING_PROBABILITY
+              value: "1.0"
+
+            # 3. 로그 포맷: [서비스명, TraceID, SpanID]가 로그에 찍히도록 설정
+            # 이 포맷이 Loki의 Regex와 일치해야 로그에서 트레이스로 바로 점프 가능
+            - name: LOGGING_PATTERN_LEVEL
+              value: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
+
+            # 4. Prometheus Exemplars 활성화: 그래프에서 트레이스 ID를 심어주는 설정
+            - name: MANAGEMENT_METRICS_DISTRIBUTION_PERCENTILES_HISTOGRAM_HTTP_SERVER_REQUESTS
+              value: "true"
           readinessProbe:
             httpGet:
               path: /actuator/health
