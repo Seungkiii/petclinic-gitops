@@ -37,9 +37,8 @@ kind: EC2NodeClass
 metadata:
   name: default
 spec:
-  amiFamily: AL2 # Amazon Linux 2
+  amiFamily: AL2023
   
-  # 실제 존재하는 노드 Role 이름
   role: <path:petclinic/inputs#NODE_ROLE_ARN>
   
   subnetSelectorTerms:
