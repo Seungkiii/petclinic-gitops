@@ -77,7 +77,7 @@ extraObjects:
               - "-c"
               - |
                 helm dependency build . &&
-                helm template $ARGOCD_APP_NAME . --include-crds |
+                helm template $ARGOCD_APP_NAME . --include-crds --namespace $ARGOCD_APP_NAMESPACE  |
                 argocd-vault-plugin generate -
           lockRepo: false
 
