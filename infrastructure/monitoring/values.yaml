@@ -44,14 +44,6 @@ loki:
           index:
             prefix: index_
             period: 24h
-    
-    # [수정] Loki 6.x 버전의 올바른 compactor 설정
-    compactor:
-      working_directory: /var/loki/compactor
-      # shared_store 제거 (자동으로 storage 설정 참조)
-      compaction_interval: 10m
-      retention_enabled: true
-      retention_delete_delay: 2h
 
 promtail:
   config:
