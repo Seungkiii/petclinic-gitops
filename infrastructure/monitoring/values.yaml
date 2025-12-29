@@ -2,27 +2,30 @@ loki:
   auth_enabled: false
   # [수정] 아래 설정들은 전부 loki 하위로 들어가야 함
   deploymentMode: SingleBinary
-  serviceAccount:
-    create: false
-    name: "loki-sa" 
-  storage:
-    type: 's3'
-    bucketNames:
-      chunks: "petclinic-loki-storage-20251229" # 오타(t) 수정 및 공백 제거
-      ruler:  "petclinic-loki-storage-20251229"
-      admin:  "petclinic-loki-storage-20251229"
-    s3:
-      region: ap-northeast-2
-      endpoint: https://s3.ap-northeast-2.amazonaws.com
-  schemaConfig:
-    configs:
-      - from: 2024-01-01
-        store: tsdb
-        object_store: s3
-        schema: v13
-        index:
-          prefix: index_
-          period: 24h
+  loki:
+    serviceAccount:
+      create: false
+      name: "loki-sa" 
+    storage:
+      type: 's3'
+      bucketNames:
+        chunks: "petclinic-loki-storage-20251229" # 오타(t) 수정 및 공백 제거
+        ruler:  "petclinic-loki-storage-20251229"
+        admin:  "petclinic-loki-storage-20251229"
+      s3:
+        region: ap-northeast-2
+        endpoint: https://s3.ap-northeast-2.amazonaws.com
+    schemaConfig:
+      configs:
+        - from: 2024-01-01
+          store: tsdb
+          object_store: s3
+          schema: v13
+          index:
+            prefix: index_
+            period: 24h
+    commonConfig:
+      replication_factor: 1
 
 # Promtail 설정
 promtail:
