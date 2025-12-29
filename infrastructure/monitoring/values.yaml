@@ -50,19 +50,8 @@ promtail:
     clients:
       - url: http://monitoring-loki.monitoring.svc.cluster.local:3100/loki/api/v1/push
 
+
 tempo:
-  tempo:
-    storage:
-      trace:
-        backend: local
-        local:
-          path: /var/tempo/traces
-  
-  persistentVolume:
-    enabled: true
-    storageClassName: gp2
-    size: 10Gi
-  
   receivers:
       zipkin:
         protocols:
@@ -79,7 +68,17 @@ tempo:
           thrift_http:
             endpoint: 0.0.0.0:14268
           grpc:
-            endpoint: 0.0.0.0:14250
+            endpoint: 0.0.0.0:14250₩
+  storage:
+    trace:
+      backend: local
+      local:
+        path: /var/tempo/traces
+  
+  persistentVolume:
+    enabled: true
+    storageClassName: gp2
+    size: 10Gi
   
   service:
     type: ClusterIP
