@@ -33,7 +33,7 @@ loki:
         admin:  "petclinic-loki-storage-20251229"
       s3:
         region: ap-northeast-2
-        endpoint: https://s3.ap-northeast-2.amazonaws.com
+        # endpoint: https://s3.ap-northeast-2.amazonaws.com
     
     schemaConfig:
       configs:
@@ -52,10 +52,9 @@ promtail:
 
 
 tempo:
-  # 1. 수신기(Receiver) 설정: Spring Boot가 보내는 데이터를 받을 문을 엽니다.
   receivers:
     zipkin:
-      endpoint: "0.0.0.0:9411" # Zipkin 포트 개방 (필수!)
+      endpoint: "0.0.0.0:9411" 
     otlp:
       protocols:
         grpc:
@@ -63,13 +62,10 @@ tempo:
         http:
           endpoint: "0.0.0.0:4318"
 
-  # 2. 저장소 설정 (일단 테스트용으로 로컬 디스크 사용)
-  # 나중에 S3로 바꿀 수 있습니다.
   persistence:
     enabled: true
     storageClass: gp2
     size: 10Gi
 
-  # 3. 서비스 모니터 (프로메테우스 연동용)
   serviceMonitor:
     enabled: true
