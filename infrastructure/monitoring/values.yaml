@@ -1,16 +1,23 @@
 loki:
   deploymentMode: SingleBinary
-  
+
   singleBinary:
     replicas: 1
     persistence:
       enabled: true
       storageClass: gp2   
-      size: 10Gi        
+      size: 10Gi
+
+  read:
+    replicas: 0
+  write:
+    replicas: 0
+  backend:
+    replicas: 0
 
   serviceAccount:
     create: false
-    name: "loki-sa"       
+    name: "loki-sa"
 
   loki:
     auth_enabled: false
@@ -41,6 +48,4 @@ loki:
 promtail:
   config:
     clients:
-      # Loki Gateway 서비스 주소 (namespace 주의: monitoring인지 argocd인지 확인 필요)
-      # 현재 로그상 argocd 네임스페이스에 설치된 것으로 보임
       - url: http://loki-gateway.argocd.svc.cluster.local/loki/api/v1/push
