@@ -63,7 +63,7 @@ tempo:
 
   persistence:
     enabled: true
-    storageClass: gp2
+    storageClassName: gp2
     size: 10Gi
 
   serviceMonitor:
