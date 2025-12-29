@@ -64,14 +64,25 @@ tempo:
     size: 10Gi
   
   receivers:
-    zipkin:
-      endpoint: "0.0.0.0:9411"
-    otlp:
-      protocols:
-        grpc:
-          endpoint: "0.0.0.0:4317"
-        http:
-          endpoint: "0.0.0.0:4318"
+      zipkin:
+        protocols:
+          http:
+            endpoint: 0.0.0.0:9411
+      otlp:
+        protocols:
+          grpc:
+            endpoint: 0.0.0.0:4317
+          http:
+            endpoint: 0.0.0.0:4318
+      jaeger:
+        protocols:
+          thrift_http:
+            endpoint: 0.0.0.0:14268
+          grpc:
+            endpoint: 0.0.0.0:14250
+  
+  service:
+    type: ClusterIP
 
   serviceMonitor:
     enabled: true
