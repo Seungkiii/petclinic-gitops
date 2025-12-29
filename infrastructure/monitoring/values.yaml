@@ -33,7 +33,7 @@ loki:
         admin:  "petclinic-loki-storage-20251229"
       s3:
         region: ap-northeast-2
-        # endpoint: https://s3.ap-northeast-2.amazonaws.com
+        s3ForcePathStyle: false
     
     schemaConfig:
       configs:
@@ -44,17 +44,19 @@ loki:
           index:
             prefix: index_
             period: 24h
+    
+    # [수정] Loki 6.x 버전의 올바른 compactor 설정
     compactor:
       working_directory: /var/loki/compactor
-      shared_store: s3
+      # shared_store 제거 (자동으로 storage 설정 참조)
       compaction_interval: 10m
+      retention_enabled: true
+      retention_delete_delay: 2h
 
 promtail:
   config:
     clients:
-      # - url: http://monitoring-loki-gateway.monitoring.svc.cluster.local/loki/api/v1/push
       - url: http://monitoring-loki.monitoring.svc.cluster.local:3100/loki/api/v1/push
-
 
 tempo:
   receivers:
