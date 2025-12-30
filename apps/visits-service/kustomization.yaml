@@ -7,5 +7,4 @@ resources:
     # [핵심] AVP 경로는 'newName'에 고정해둡니다. (CI가 절대 안 건드림)
 images:
 - name: petclinic-visits-image
-  newName: <path:petclinic/inputs#AWS_ACCOUNT_ID>.dkr.ecr.ap-northeast-2.amazonaws.com/petclinic-visits
-  newTag: sha-d7f05b5
+  newTag: sha-4eddac2
