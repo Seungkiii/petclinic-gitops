@@ -1,0 +1,12 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - templates/visits-service.yaml
+
+images:
+  - name: petclinic-visits-image        # templates/visits-service.yaml에 적은 별칭
+    # [핵심] AVP 경로는 'newName'에 고정해둡니다. (CI가 절대 안 건드림)
+    newName: <path:petclinic/inputs#AWS_ACCOUNT_ID>.dkr.ecr.ap-northeast-2.amazonaws.com/petclinic-visits
+    # [핵심] CI는 오직 이 'newTag'만 바꿉니다.
+    newTag: "initial-tag"
