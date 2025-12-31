@@ -10,22 +10,21 @@ data:
 
     export let options = {
       stages: [
-        { duration: '1m', target: 10 },
-        { duration: '2m', target: 30 },
-        { duration: '3m', target: 60 },
-        { duration: '2m', target: 100 },
-        { duration: '2m', target: 0 },
+        { duration: '30s', target: 50 },  // 워밍업
+        { duration: '5m', target: 300 },  // 300명 동시 접속 (강력한 부하)
+        { duration: '1m', target: 0 },    // 종료
       ],
     };
 
-    const BASE_URL = 'http://petclinic-visits.default.svc.cluster.local:8080'\;
-
     export default function () {
-      let health = http.get(BASE_URL + '/actuator/health');
-      check(health, { 'health is 200': (r) => r.status === 200 });
+      // [핵심] 화면 주소(#!/...)가 아니라 실제 API 엔드포인트입니다.
+      // visits-service가 담당하는 URL 패턴: /owners/{ownerId}/pets/{petId}/visits
       
-      let metrics = http.get(BASE_URL + '/actuator/prometheus');
-      check(metrics, { 'metrics is 200': (r) => r.status === 200 });
+      let res = http.get('http://petclinic-visits.default.svc.cluster.local:8080/owners/1/pets/1/visits');
       
-      sleep(0.5);
+      // 요청이 성공했는지 체크 (200 OK가 안 나오면 URL이나 서비스명이 틀린 것)
+      check(res, { 'status was 200': (r) => r.status == 200 });
+
+      // CPU를 불태우기 위해 쉼표(sleep)를 거의 없앱니다.
+      sleep(0.01); 
     }
