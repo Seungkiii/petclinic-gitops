@@ -10,11 +10,11 @@ data:
 
     export let options = {
       stages: [
-        { duration: '1m', target: 10 },   // 워밍업
-        { duration: '2m', target: 30 },   // 점진적 증가
-        { duration: '3m', target: 60 },   // HPA 트리거
-        { duration: '2m', target: 100 },  // Karpenter 트리거
-        { duration: '2m', target: 0 },    // 램프다운
+        { duration: '1m', target: 10 },
+        { duration: '2m', target: 30 },
+        { duration: '3m', target: 60 },
+        { duration: '2m', target: 100 },
+        { duration: '2m', target: 0 },
       ],
     };
 
@@ -27,36 +27,5 @@ data:
       let metrics = http.get(`${BASE_URL}/actuator/prometheus`);
       check(metrics, { 'metrics is 200': (r) => r.status === 200 });
       
-      sleep(test/k6-job.yaml <<'EOF'
-apiVersion: batch/v1
-kind: Job
-metadata:
-  name: k6-load-test
-  namespace: default
-spec:
-  ttlSecondsAfterFinished: 300
-  template:
-    metadata:
-      labels:
-        app: k6-load-test
-    spec:
-      containers:
-      - name: k6
-        image: grafana/k6:latest
-        command: ['k6', 'run', '/scripts/script.js']
-        volumeMounts:
-          - name: k6-script
-            mountPath: /scripts
-        resources:
-          requests:
-            cpu: 100m
-            memory: 128Mi
-          limits:
-            cpu: 500m
-            memory: 512Mi
-      volumes:
-        - name: k6-script
-          configMap:
-            name: k6-script
-      restartPolicy: Never
-  backoffLimit: 0
+      sleep(0.5);
+    }
