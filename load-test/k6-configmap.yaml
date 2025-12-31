@@ -21,10 +21,10 @@ data:
     const BASE_URL = 'http://petclinic-visits.default.svc.cluster.local:8080'\;
 
     export default function () {
-      let health = http.get(`${BASE_URL}/actuator/health`);
+      let health = http.get(BASE_URL + '/actuator/health');
       check(health, { 'health is 200': (r) => r.status === 200 });
       
-      let metrics = http.get(`${BASE_URL}/actuator/prometheus`);
+      let metrics = http.get(BASE_URL + '/actuator/prometheus');
       check(metrics, { 'metrics is 200': (r) => r.status === 200 });
       
       sleep(0.5);
