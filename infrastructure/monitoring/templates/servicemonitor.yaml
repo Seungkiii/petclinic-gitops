@@ -31,3 +31,23 @@ spec:
       path: /actuator/prometheus
       interval: 15s
       scrapeTimeout: 10s
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: karpenter-monitor
+  namespace: monitoring
+  labels:
+    release: my-monitoring  # Prometheus의 serviceMonitorSelector와 일치
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: karpenter
+  namespaceSelector:
+    matchNames:
+      - kube-system
+  endpoints:
+    - port: http-metrics  # Karpenter Service의 포트 이름
+      path: /metrics
+      interval: 30s
+      scrapeTimeout: 10s
