@@ -1,0 +1,81 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: petclinic-scaling-alerts
+  namespace: monitoring
+  labels:
+    release: my-monitoring
+spec:
+  groups:
+    - name: hpa-scaling
+      interval: 30s
+      rules:
+        - alert: HPAScalingActivity
+          expr: |
+            abs(
+              kube_horizontalpodautoscaler_status_current_replicas
+              - 
+              kube_horizontalpodautoscaler_status_desired_replicas
+            ) > 0
+          for: 1m
+          labels:
+            severity: info
+          annotations:
+            summary: 'HPA is scaling'
+            description: 'HPA is adjusting replicas to meet demand'
+        
+        - alert: HPAMaxReplicasReached
+          expr: |
+            kube_horizontalpodautoscaler_status_current_replicas 
+            >= 
+            kube_horizontalpodautoscaler_spec_max_replicas
+          for: 2m
+          labels:
+            severity: warning
+          annotations:
+            summary: 'HPA reached max replicas'
+            description: 'HPA reached maximum replica count. Consider increasing limits.'
+        
+        - alert: HighCPUUtilization
+          expr: |
+            avg(rate(container_cpu_usage_seconds_total{namespace="default",container!=""}[5m])) by (pod) 
+            / 
+            avg(kube_pod_container_resource_requests{resource="cpu", namespace="default"}) by (pod) 
+            > 0.8
+          for: 2m
+          labels:
+            severity: warning
+          annotations:
+            summary: 'Pod has high CPU usage'
+            description: 'Pod CPU usage is above 80% of request'
+    
+    - name: karpenter-scaling
+      interval: 30s
+      rules:
+        - alert: KarpenterNodeCreated
+          expr: |
+            increase(karpenter_nodeclaims_created_total[2m]) > 0
+          labels:
+            severity: info
+          annotations:
+            summary: 'Karpenter created new node'
+            description: 'Karpenter NodePool created new node(s)'
+        
+        - alert: KarpenterNodeTerminated
+          expr: |
+            increase(karpenter_nodeclaims_terminated_total[2m]) > 0
+          labels:
+            severity: info
+          annotations:
+            summary: 'Karpenter terminated node'
+            description: 'Karpenter NodePool terminated node(s)'
+        
+        - alert: KarpenterHighPendingPods
+          expr: |
+            sum(kube_pod_status_phase{phase="Pending", namespace="default"}) > 5
+          for: 3m
+          labels:
+            severity: warning
+          annotations:
+            summary: 'Many pods pending scheduling'
+            description: 'Multiple pods are pending for more than 3 minutes'
