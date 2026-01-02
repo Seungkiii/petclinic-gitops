@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: api-gateway
-          image: <path:petclinic/inputs#AWS_ACCOUNT_ID>.dkr.ecr.ap-northeast-2.amazonaws.com/petclinic-gateway:sha-bdf7063
+          image: <path:petclinic/inputs#AWS_ACCOUNT_ID>.dkr.ecr.ap-northeast-2.amazonaws.com/petclinic-gateway:sha-ea77ec5
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
