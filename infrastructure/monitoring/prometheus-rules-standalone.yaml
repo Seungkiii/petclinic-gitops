@@ -29,7 +29,7 @@ spec:
           expr: |
             kube_horizontalpodautoscaler_status_current_replicas 
             >= 
-            kube_horizontalpodautoscaler_sc_max_replicas
+            kube_horizontalpodautoscaler_spec_max_replicas
           for: 2m
           labels:
             severity: warning
@@ -50,20 +50,20 @@ spec:
             component: pod
           annotations:
             summary: '🔥 {{ $labels.pod }} has high CPU'
-            description: 'CPU usage: {{ $value | humanizePercentage }} of request'
+            description: 'CPU usage is above 80% of request'
     
     - name: karpenter-scaling
       interval: 30s
       rules:
         - alert: KarpenterNodeCreated
           expr: |
-            in(karpenter_nodeclaims_created_total[2m]) > 0
+            increase(karpenter_nodeclaims_created_total[2m]) > 0
           labels:
             severity: info
             component: karpenter
           annotations:
             summary: '🚀 Karpenter created new node(s)'
-            description: 'NodePool created {{ $value }} new node(s)'
+            description: 'NodePool created new node(s)'
         
         - alert: KarpenterNodeTerminated
           expr: |
@@ -73,7 +73,7 @@ spec:
             component: karpenter
           annotations:
             summary: '✅ Karpenter terminated node(s)'
-            description: 'NodePool terminated {{ $value }} node(s) to save cost'
+            description: 'NodePool terminated node(s) to save cost'
         
         - alert: KarpenterHighPendingPods
           expr: |
@@ -83,5 +83,5 @@ spec:
             severity: warning
             component: karpenter
           annotations:
-            summary: '⏳ {{ $value }} pods pending scheduling'
-            description: 'Multiple podsng for >3 minutes. Karpenter may need to provision nodes.'
+            summary: '⏳ Multiple pods pending scheduling'
+            description: 'Multiple pods pending for >3 minutes. Karpenter may need to provision nodes.'
