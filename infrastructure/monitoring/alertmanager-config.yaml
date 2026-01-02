@@ -1,0 +1,69 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: alertmanager-config
+  namespace: monitoring
+data:
+  alertmanager.yml: |
+    global:
+      resolve_timeout: 5m
+      slack_api_url: 'https://hooks.slack.com/services/YOUR/WEBHOOK/URL'
+    
+    route:
+      group_by: ['alertname', 'severity']
+      group_wait: 10s        # 알림 그룹화 대기 시간
+      group_interval: 5m     # 같은 그룹 재전송 간격
+      repeat_interval: 4h    # 미해결 시 반복 알림
+      receiver: 'slack-scaling'
+      
+      routes:
+        # Critical: 즉시 알림 (PagerDuty 등 추가 가능)
+        - match:
+            severity: critical
+          receiver: 'slack-critical'
+          repeat_interval: 1h
+        
+        # Warning: HPA, Karpenter 스케일링
+        - match:
+            severity: warning
+          receiver: 'slack-scaling'
+          repeat_interval: 4h
+        
+        # Info: 일반 정보
+        - match:
+            severity: info
+          receiver: 간색)
+      - name: 'slack-critical'
+        slack_configs:
+          - channel: '#alerts-critical'
+            color: 'danger'
+            title: '🚨 Critical Alert'
+            text: |-
+              {{ range .Alerts }}
+              *Alert:* {{ .Labels.alertname }}
+              *Description:* {{ .Annotations.description }}
+              *Details:*
+              {{ range .Labels.SortedPairs }} • *{{ .Name }}:* {{ .Value }}
+              {{ end }}
+              {{ end }}
+      
+      # Scaling 전용 (주황색)
+      - name: 'slack-scaling'
+        slack_configs:
+          - channel: '#petclinic-alerts'
+            color: 'warning'
+            title: '⚡ Scaling Alert'
+            text: |-
+              {{ range .Alerts }}
+              *Alert:* {{ .Labels.alertname }}
+              *Summary:* {{ .Annotations.summary }}
+              *Description:* {{ .Annotations.description }}
+              {{ end }}
+            send_resolved: true
+      
+      # Info 전용 (파란색)
+      - name: 'slack-info     - channel: '#alerts-info'
+            color: 'good'
+            title: 'ℹ️ Info Alert'
+            text: '{{ range .Alerts }}{{ .Annotations.summary }}{{ end }}'
+            send_resolved: true
