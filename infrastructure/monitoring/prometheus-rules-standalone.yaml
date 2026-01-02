@@ -20,21 +20,23 @@ spec:
           for: 1m
           labels:
             severity: info
+            component: hpa
           annotations:
-            summary: 'HPA is scaling'
-            description: 'HPA is adjusting replicas to meet demand'
+            summary: '⚡ HPA is scaling {{ $labels.horizontalpodautoscaler }}'
+            description: 'Current: {{ $value }} replicas. Adjusting to meet demand.'
         
         - alert: HPAMaxReplicasReached
           expr: |
             kube_horizontalpodautoscaler_status_current_replicas 
             >= 
-            kube_horizontalpodautoscaler_spec_max_replicas
+            kube_horizontalpodautoscaler_sc_max_replicas
           for: 2m
           labels:
             severity: warning
+            component: hpa
           annotations:
-            summary: 'HPA reached max replicas'
-            description: 'HPA reached maximum replica count. Consider increasing limits.'
+            summary: '⚠️ HPA reached max replicas'
+            description: 'HPA {{ $labels.horizontalpodautoscaler }} reached maximum: {{ $value }} replicas. Consider increasing limits.'
         
         - alert: HighCPUUtilization
           expr: |
@@ -45,30 +47,33 @@ spec:
           for: 2m
           labels:
             severity: warning
+            component: pod
           annotations:
-            summary: 'Pod has high CPU usage'
-            description: 'Pod CPU usage is above 80% of request'
+            summary: '🔥 {{ $labels.pod }} has high CPU'
+            description: 'CPU usage: {{ $value | humanizePercentage }} of request'
     
     - name: karpenter-scaling
       interval: 30s
       rules:
         - alert: KarpenterNodeCreated
           expr: |
-            increase(karpenter_nodeclaims_created_total[2m]) > 0
+            in(karpenter_nodeclaims_created_total[2m]) > 0
           labels:
             severity: info
+            component: karpenter
           annotations:
-            summary: 'Karpenter created new node'
-            description: 'Karpenter NodePool created new node(s)'
+            summary: '🚀 Karpenter created new node(s)'
+            description: 'NodePool created {{ $value }} new node(s)'
         
         - alert: KarpenterNodeTerminated
           expr: |
             increase(karpenter_nodeclaims_terminated_total[2m]) > 0
           labels:
             severity: info
+            component: karpenter
           annotations:
-            summary: 'Karpenter terminated node'
-            description: 'Karpenter NodePool terminated node(s)'
+            summary: '✅ Karpenter terminated node(s)'
+            description: 'NodePool terminated {{ $value }} node(s) to save cost'
         
         - alert: KarpenterHighPendingPods
           expr: |
@@ -76,6 +81,7 @@ spec:
           for: 3m
           labels:
             severity: warning
+            component: karpenter
           annotations:
-            summary: 'Many pods pending scheduling'
-            description: 'Multiple pods are pending for more than 3 minutes'
+            summary: '⏳ {{ $value }} pods pending scheduling'
+            description: 'Multiple podsng for >3 minutes. Karpenter may need to provision nodes.'
