@@ -17,7 +17,7 @@ spec:
               - 
               kube_horizontalpodautoscaler_status_desired_replicas
             ) > 0
-          for: 1m
+          for: 10s
           labels:
             severity: info
             component: hpa
@@ -30,7 +30,7 @@ spec:
             kube_horizontalpodautoscaler_status_current_replicas 
             >= 
             kube_horizontalpodautoscaler_spec_max_replicas
-          for: 2m
+          for: 30s
           labels:
             severity: warning
             component: hpa
