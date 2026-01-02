@@ -82,3 +82,54 @@ tempo:
   
   serviceMonitor:
     enabled: true
+
+alertmanager:
+  enabled: true
+  config:
+    global:
+      resolve_timeout: 5m
+      slack_api_url: 'https://hooks.slack.com/services/YOUR/WEBHOOK/URL'  # ← 여기에 실제 Webhook URL
+    
+    route:
+      group_by: ['alertname', 'severity']
+      group_wait: 10s
+      group_interval: 5m
+      repeat_interval: 4h
+      receiver: 'slack-scaling'
+      
+      routes:
+        - match:
+            severity: warning
+          receiver: 'slack-scaling'
+          repeat_interval: 4h
+        
+        - match:
+            severity: info
+          receiver: 'slack-info'
+          repeat_interval: 12h
+    
+    receivers:
+      - name: 'slack-scaling'
+        slack_configs:
+          - channel: '#petclinic-alerts'
+            color: 'warning'
+            title: '⚡ Scaling Alert'
+            text: |-
+              {{ range .Alerts }}
+              *Alert:* {{ .Labels.alertname }}
+              *Summary:* {{ .Annotations.summary }}
+              *Description:* {{ .Annotations.description }}
+              {{ end }}
+            send_resolved: true
+      
+      - name: 'slack-info'
+        slack_configs:
+          - channel: '#petclinic-alerts'
+            color: 'good'
+            title: 'ℹ️ Info Alert'
+            text: |-
+              {{ range .Alerts }}
+              *Alert:* {{ .Labels.alertname }}
+              *Summary:* {{ .Annotations.summary }}
+              {{ end }}
+            send_resolved: true
