@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: <path:petclinic/inputs#AWS_ACCOUNT_ID>.dkr.ecr.ap-northeast-2.amazonaws.com/petclinic-frontend:sha-ea77ec5
+          image: <path:petclinic/inputs#AWS_ACCOUNT_ID>.dkr.ecr.ap-northeast-2.amazonaws.com/petclinic-frontend:sha-19fce90
           imagePullPolicy: Always
           ports:
             - containerPort: 80
