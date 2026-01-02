@@ -22,8 +22,10 @@ metadata:
     # ArgoCD Vault Plugin을 통해 값 주입
     alb.ingress.kubernetes.io/subnets: <path:petclinic/inputs#PUBLIC_SUBNETS>
     # 리스너 포트
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
     
+    # [설정 2] ACM 인증서 ARN 적용 (제공해주신 값)
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-northeast-2:206799461964:certificate/04d68904-f9ae-47de-9372-a135d31ef3aa
     # Path Rewrite 제거: nginx에서 직접 /petclinic 경로를 처리하도록 함
     # alb.ingress.kubernetes.io/rewrite-target: /
     
