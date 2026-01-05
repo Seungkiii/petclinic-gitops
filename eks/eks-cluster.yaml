@@ -70,6 +70,13 @@ iam:
 # 필수 Add-on 자동 설치
 addons:
   - name: vpc-cni
+    version: latest
+    attachPolicyARNs:
+      - arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
+    configurationValues: |-
+      env:
+        ENABLE_PREFIX_DELEGATION: "true"
+        WARM_PREFIX_TARGET: "1"
   - name: coredns
   - name: kube-proxy
   - name: aws-ebs-csi-driver       # PVC(스토리지) 사용을 위해 필수
