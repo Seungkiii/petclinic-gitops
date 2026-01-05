@@ -48,7 +48,7 @@ loki:
 promtail:
   config:
     clients:
-      - url: http://monitoring-loki.monitoring.svc.cluster.local:3100/loki/api/v1/push
+      - url: http://monitoring-loki-gateway.monitoring.svc.cluster.local:80/loki/api/v1/push
 
 tempo:
   receivers:
